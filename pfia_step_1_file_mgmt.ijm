@@ -1,10 +1,10 @@
 /* 
  PFIA Step 1: File management:
  - This ImageJ Macro script exports files from proprietary microscope software into .tif files. If an image is a stack
- or has multiple channels, it will save maximum projections of image and if it has more than one channel, it will save individual stacks
- and maximum projections of each image. The script also pulls the metadata from the file and saves it as a .csv file.
- The script also pulls histogram values of individual channel images and saves them as .csv. These latter .csv files with 
-the histogram information can be plotted in many freely and licensed statistical or spreadsheet softwares.
+ it will save maximum projections of image and if it has more than one channel, it will save individual stacks
+ and maximum projections of each image. The script pulls the metadata from the file and saves it as a .csv file.
+ The script also pulls histogram values of individual channel images and saves them as .csv. These latter .csv files 
+ (containing histogram information) can be plotted in many free, licensed statistical or spreadsheet softwares.
 
  Code contributors: Juan C. Sanchez-Arias, Simona D. Frederiksen, Hai Lam Nguyen
  Affiliations: University of Victoria, Division of Medical Sciences, Swayne Lab
@@ -13,17 +13,17 @@ the histogram information can be plotted in many freely and licensed statistical
  
  Github repository: https://github.com/SwayneLab/pfia
 
- To report issues, comment, or suggest improvement pull a request through the github repository or contact juansa@uvic.ca
+ To report issues, comment, or suggest improvement submit a request through the github repository or contact juansa@uvic.ca
 */
 
 /* Step 1: Obtaining files
- These chunk takes a proprietary microscopy software file (e.g., .lif) containing merged TileScans
+ This portion takes a proprietary microscopy software file (e.g., .lif) containing merged TileScans
  and outputs a flatten max-projected RGB image in .lpeg format and .tif files of stacks and maximum projections of 
  each image and its individual channels (if it has more than 1 channel). 
  Files are stored in subdirectories from a parent directory and per image series directory
 */ 
 
-// Getting file and folder information
+// Get file and folder information
 input_folder = getDirectory("Select a source folder with image file to analyze"); 
 fs = File.separator; // This takes the file separator from a given operating system (i.e., "/" or "\") for further use
 parent_input_folder = File.getParent(input_folder);
@@ -37,7 +37,7 @@ list2 = newArray(list1.length);
 a = 0
 
 /*
- Creates a dialog window to store the file extension from user input 
+ Create a dialog window to store the file extension from user input 
 */
 Dialog.create("File extension information");
 Dialog.addString('Enter file extension, include the "." (e.g., .lif) ', "");
