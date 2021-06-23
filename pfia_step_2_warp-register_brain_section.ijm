@@ -1,10 +1,7 @@
 /* 
  PFIA Step 2: Warp and register brain section:
- - This ImageJ Macro script exports files from proprietary microscope software into .tif files. If an image is a stack
- or has multiple channels, it will save maximum projections of image and if it has more than one channel, it will save individual stacks
- and maximum projections of each image. The script also pulls the metadata from the file and saves it as a .csv file.
- The script also pulls histogram values of individual channel images and saves them as .csv. These latter .csv files with 
-the histogram information can be plotted in many freely and licensed statistical or spreadsheet softwares.
+ - This ImageJ macro helps to register a brain section to an unified atlas. 
+ - The user can select specific brain regions of interest (ROIs) to count cells using the "pfia_step3_count_cells.ijm" macro.
 
  Code contributors: Juan C. Sanchez-Arias, Simona D. Frederiksen 
  Affiliations: University of Victoria, Division of Medical Sciences, Swayne Lab
