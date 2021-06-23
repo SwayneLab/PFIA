@@ -36,8 +36,6 @@ open(img_path);
 img_name_only = File.nameWithoutExtension;
 selectWindow(img_name);
 
-
-
 /*
  Creates a dialog window to get rotation angle and flip information from user. 
 */
