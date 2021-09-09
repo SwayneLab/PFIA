@@ -93,7 +93,8 @@ for (roi = 0; roi < atlas_roi; roi++) {
 	close("Results"); 
 //	roiManager("reset");
 //	run("Analyze Particles...", "size=35-Infinity pixel circularity=0.5-1.00 show=Outlines clear summarize add");
-	run("Analyze Particles...", "size=35-Infinity pixel circularity=0.5-1.00 show=Outlines clear summarize");
+//	run("Analyze Particles...", "size=35-Infinity pixel circularity=0.5-1.00 show=Outlines clear summarize");
+	run("Analyze Particles...", "size=60-9000 circularity=0.7-1.00 show=Outlines clear summarize");
 	
 	nROIs=roiManager("count");
 	selectWindow(img_sub_name);
