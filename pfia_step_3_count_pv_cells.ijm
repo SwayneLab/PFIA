@@ -72,6 +72,7 @@ img_sub_name = getTitle();
 
 //2) Perform global thresholding
 setAutoThreshold("Moments dark");
+run("Despeckle"); // New feature added during revisions
 run("Convert to Mask");
 run("Watershed");
 
