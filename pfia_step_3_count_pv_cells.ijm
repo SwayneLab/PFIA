@@ -69,15 +69,16 @@ imageCalculator("Subtract create", img_name, img_duplicate);
 close(img_name);
 close(img_duplicate);
 img_sub_name = getTitle();
+selectWindow(img_sub_name);
 
-//2) Perform global thresholding
-setAutoThreshold("Moments dark");
-run("Despeckle"); // New feature added during revisions
-run("Convert to Mask");
-run("Watershed");
+////2) Perform global thresholding
+//setAutoThreshold("Moments dark");
+//run("Despeckle"); // New feature added during revisions
+//run("Convert to Mask");
+//run("Watershed");
 
-img_thresholded = img_name_only + "_whole_threshold.jpg";  
-saveAs("jpeg", img_path_parent + fs + img_thresholded); 
+//img_thresholded = img_name_only + "_whole_threshold.jpg";  
+//saveAs("jpeg", img_path_parent + fs + img_thresholded); 
 
 //3) Count cells with atlas-based brain region ROIs iteration
 waitForUser("Open and select ROI(s).\n \nRemove from the 'ROI Manager' any ROI that will not be analyzed"); // Waits for the user to open load ROI(s) of interest
@@ -90,30 +91,52 @@ for (roi = 0; roi < atlas_roi; roi++) {
 	run("Set Measurements...", "area redirect=img_sub_name decimal=3");
 	run("Measure");
 	saveAs("Results", img_path_parent + fs + img_name_only + "_area_" + roi_name + ".csv");
-	close("Results"); 
-//	roiManager("reset");
+	close("Results");
+
+	// Isolate image ROI - It fills with black everything in the image but the select ROI
+	selectWindow(img_sub_name);
+	roiManager("select", roi);
+	run("Duplicate...", "title=cropped");
+	run("Make Inverse");
+	run("Clear", "slice");
+	run("Select None");
+	selectWindow("cropped");
+	cropped_img = getTitle(); 
+	roiManager("reset");
 //	run("Analyze Particles...", "size=35-Infinity pixel circularity=0.5-1.00 show=Outlines clear summarize add");
 //	run("Analyze Particles...", "size=35-Infinity pixel circularity=0.5-1.00 show=Outlines clear summarize");
-	run("Analyze Particles...", "size=45-9000 circularity=0.6-1.00 show=Outlines clear summarize");
+//	run("Analyze Particles...", "size=60-9000 circularity=0.7-1.00 show=Outlines clear summarize add");
+//	run("Analyze Particles...", "size=45-9000 circularity=0.6-1.00 show=Outlines clear summarize");
 	
-	nROIs=roiManager("count");
-	selectWindow(img_sub_name);
+//	run("Command From Macro", "command=[de.csbdresden.stardist.StarDist2D], args=['input': '"+img_name+"', 'modelChoice':'Versatile (fluorescent nuclei)', 'normalizeInput':'true', 'percentileBottom':'1.0', 'percentileTop':'99.0', 'probThresh':'0.743', 'nmsThresh':'0.7999999999999999', 'outputType':'Both', 'nTiles':'1', 'excludeBoundary':'2', 'roiPosition':'Automatic', 'verbose':'false', 'showCsbdeepProgress':'false', 'showProbAndDist':'false'], process=[false]");
+		
+		
+	run("Command From Macro", "command=[de.csbdresden.stardist.StarDist2D], args=['input': '"+cropped_img+"', 'modelChoice':'Versatile (fluorescent nuclei)', 'normalizeInput':'true', 'percentileBottom':'1.0', 'percentileTop':'99.0', 'probThresh':'0.743', 'nmsThresh':'0.7999999999999999', 'outputType':'Both', 'nTiles':'1', 'excludeBoundary':'2', 'roiPosition':'Automatic', 'verbose':'false', 'showCsbdeepProgress':'false', 'showProbAndDist':'false'], process=[false]");
+	
+//	nROIs=roiManager("count");
+
+	selectWindow("Label Image");
+	saveAs("tif", img_path_parent + fs + img_name_only + "_roi_isolated_image_" + roi_name + ".tiff");
 	
 	//Save ROIs - region and cells
-	run("Select All");
+	nROIs=roiManager("count");
+	roiManager("select", Array.getSequence(nROIs));
 	cell_count_rois = img_name_only + "_cell_count_roi-set.zip";
-//	roiManager("Save", img_path_parent + fs + cell_count_rois);
-//	roiManager("reset");
+	roiManager("Save", img_path_parent + fs + cell_count_rois);
+	roiManager("Measure");
+	saveAs("Results", img_path_parent + fs + cell_count_results + "_" + roi_name+ ".csv");
+	
+	roiManager("reset");
 //	close("Result of " + img_name);
-	selectWindow("Drawing of Result of " + img_name);
-	saveAs("jpeg", img_path_parent + fs + img_name_only + "_cell_count_outline_image_" + roi_name + ".jpg");
-	close("Drawing of Result of " + img_name);
+//	selectWindow("Drawing of Result of " + img_name);
+//	saveAs("jpeg", img_path_parent + fs + img_name_only + "_cell_count_outline_image_" + roi_name + ".jpg");
+//	close("Drawing of Result of " + img_name);
 	
 	//Save summary cell count
-	selectWindow("Summary");
-	cell_count_results = img_name_only + "_summary_cell_count";
-	saveAs("Results", img_path_parent + fs + cell_count_results + "_" + roi_name+ ".csv");
-	run("Close"); 
+//	selectWindow("Summary");
+//	cell_count_results = img_name_only + "_summary_cell_count";
+//	saveAs("Results", img_path_parent + fs + cell_count_results + "_" + roi_name+ ".csv");
+//	run("Close"); 
 }
 
 // Close all windows 
