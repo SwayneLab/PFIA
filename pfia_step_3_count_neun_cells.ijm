@@ -85,24 +85,39 @@ for (roi = 0; roi < atlas_roi; roi++) {
 	run("Measure");
 	saveAs("Results", img_path_parent + fs + img_name_only + "_area_" + roi_name + ".csv");
 	close("Results");
+	
 	run("Set Measurements...", "area display redirect=None decimal=3");
-	run("Find Maxima...", "prominence=15 exclude output=Count"); // Prominence values between 10-20 worked best in our hands
-	selectWindow("Results");
-	saveAs("Results", img_path_parent + fs + img_name_only + "_count_" + roi_name + ".csv");
+//	run("Find Maxima...", "prominence=15 exclude output=Count"); // Prominence values between 10-20 worked best in our hands
+//	selectWindow("Results");
+
+	selectWindow(img_duplicate);
+	roiManager("select", roi);
+	run("Crop");
+	run("Make Inverse");
+	run("Clear", "slice");
+	run("Select None");
+
+	run("Command From Macro", "command=[de.csbdresden.stardist.StarDist2D], args=['input': '" + img_duplicate + "', 'modelChoice':'DSB 2018 (from StarDist 2D paper)', 'normalizeInput':'true', 'percentileBottom':'80.0', 'percentileTop':'99.0', 'probThresh':'0.125', 'nmsThresh':'0.35000000000000003', 'outputType':'Both', 'nTiles':'1', 'excludeBoundary':'2', 'roiPosition':'Automatic', 'verbose':'false', 'showCsbdeepProgress':'false', 'showProbAndDist':'false'], process=[false]");
+
+	selectWindow("Label Image");
+	saveAs("tif", img_path_parent + fs + img_name_only + "_roi_isolated_image_" + roi_name + ".tiff");
+	
+	//Save ROIs - region and cells
+	nROIs=roiManager("count");
+	roiManager("select", Array.getSequence(nROIs));
+	cell_count_rois = img_name_only + "_cell_count_roi-set.zip";
+	roiManager("Save", img_path_parent + fs + cell_count_rois);
+	roiManager("Measure");
+	saveAs("Results", img_path_parent + fs + cell_count_results + "_" + roi_name+ ".csv");
+
+	roiManager("reset");
+		
 	close("Results");
 }
 
-selectWindow("img_duplicate");
-run("Find Maxima...", "prominence=10 exclude output=[Segmented Particles]");
-selectWindow("img_duplicate");
-run("Auto Threshold", "method=Triangle white");
-imageCalculator("AND create", "img_duplicate", "img_duplicate Segmented");
-selectWindow("Result of img_duplicate");
-saveAs("tiff", img_path_parent + fs + img_name_only + "_segmented.tif");
-
-//Close all windows
+// Close all windows 
+close("ROI Manager");
 close("*");
-selectWindow("ROI Manager");
 
-// Free up memoery
+ // Fress memory
 run("Collect Garbage");
